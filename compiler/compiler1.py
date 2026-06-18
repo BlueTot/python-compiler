@@ -13,12 +13,9 @@ parser = Lark.open("./grammar.lark", parser="lalr", transformer=ASTBuilder())
 
 
 def main() -> None:
-    while True:
-        try:
-            s = input('> ')
-        except EOFError:
-            break
-        print(parser.parse(s))
+    with open("./code.txt") as f:
+        program = f.read()
+    print(parser.parse(program))
 
 if __name__ == "__main__":
     main()

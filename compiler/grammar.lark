@@ -1,21 +1,64 @@
-?start: sum
-        | NAME "=" sum    -> assign_var
+?start: block
 
-?sum: product
-    | sum "+" product   -> add
-    | sum "-" product   -> sub
+// a block is zero or more statements
+?block: statement*
 
+
+// statement
+?statement: assignment ";"
+    | if
+    | while
+    | for
+
+
+// assignment
+?assignment: NAME "=" expression
+
+
+// if statement
+?if: "if" "(" condition ")" "{" block "}" -> if_only
+    | "if" "(" condition ")" "{" block "}" "else" "{" block "}" -> if_and_else
+
+
+// while loop
+?while: "while" "(" condition ")" "{" block "}"
+
+
+// for loop
+?for: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
+
+
+// condition
+?condition: expression
+    | expression ">" expression -> greater_than
+    | expression "<" expression -> less_than
+    | expression "==" expression -> equal_to
+    | expression "!=" expression -> not_equal_to
+    | expression ">=" expression -> greater_than_equal
+    | expression "<= " expression -> less_than_equal
+
+
+// expression
+?expression: product
+    | expression "+" product   -> add
+    | expression "-" product   -> sub
+
+
+// product
 ?product: atom
     | product "*" atom  -> mul
     | product "/" atom  -> div
 
+
+// atom
 ?atom: NUMBER           -> number
         | "-" atom         -> neg
         | NAME             -> var
-        | "(" sum ")"
+        | "(" expression ")"
+
 
 %import common.CNAME -> NAME
 %import common.NUMBER
-%import common.WS_INLINE
+%import common.WS
 
-%ignore WS_INLINE
+%ignore WS
