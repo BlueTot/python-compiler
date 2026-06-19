@@ -6,9 +6,9 @@
 
 // statement
 ?statement: assignment ";"
-    | if
-    | while
-    | for
+    | if_statement
+    | while_statement
+    | for_statement
 
 
 // assignment
@@ -16,16 +16,16 @@
 
 
 // if statement
-?if: "if" "(" condition ")" "{" block "}" -> if_only
-    | "if" "(" condition ")" "{" block "}" "else" "{" block "}" -> if_and_else
+?if_statement: "if" "(" condition ")" "{" block "}" -> if_only_statement 
+    | "if" "(" condition ")" "{" block "}" "else" "{" block "}" -> if_and_else_statement
 
 
 // while loop
-?while: "while" "(" condition ")" "{" block "}"
+?while_statement: "while" "(" condition ")" "{" block "}"
 
 
 // for loop
-?for: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
+?for_statement: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
 
 
 // condition
@@ -35,7 +35,7 @@
     | expression "==" expression -> equal_to
     | expression "!=" expression -> not_equal_to
     | expression ">=" expression -> greater_than_equal
-    | expression "<= " expression -> less_than_equal
+    | expression "<=" expression -> less_than_equal
 
 
 // expression
