@@ -5,10 +5,21 @@
 
 
 // statement
-?statement: assignment ";"
+?statement: variable_declaration ";"
+    | assignment ";"
     | if_statement
     | while_statement
     | for_statement
+
+
+// datatype
+?datatype: "int" -> int_type
+    | "bool" -> bool_type
+
+
+// variable declaration
+variable_declaration: datatype NAME -> var_declaration
+    | datatype NAME "=" expression -> var_declaration_with_value
 
 
 // assignment
@@ -25,7 +36,7 @@
 
 
 // for loop
-?for_statement: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
+?for_statement: "for" "(" (variable_declaration | assignment) ";" condition ";" assignment ")" "{" block "}"
 
 
 // condition
