@@ -25,7 +25,6 @@ class SemanticChecker:
 
 
     def check(self, ast: Program) -> None:
-        print(ast)
         """
             Entry point to the semantic checker
             Checks if an AST for a program is valid, raising a SemanticError if not
