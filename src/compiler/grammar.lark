@@ -43,7 +43,7 @@ for_statement: "for" "(" assignment ";" condition ";" assignment ")" "{" block "
 
 
 // condition
-?condition: expression
+condition: expression -> no_symbol_condition
     | expression ">" expression -> greater_than
     | expression "<" expression -> less_than
     | expression "==" expression -> equal_to

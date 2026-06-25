@@ -25,6 +25,7 @@ class SemanticChecker:
 
 
     def check(self, ast: Program) -> None:
+        print(ast)
         """
             Entry point to the semantic checker
             Checks if an AST for a program is valid, raising a SemanticError if not
@@ -33,7 +34,6 @@ class SemanticChecker:
 
     
     def __check_block(self, block: Block, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
-        print(block)
         """
             Checks if a block of code is valid, raising a SemanticError if not
             Returns set of initialised variables
@@ -55,6 +55,9 @@ class SemanticChecker:
 
             elif isinstance(statement, ForStatement):
                 initialised = self.__check_for_loop(statement, scopes, initialised)
+
+            else:
+                raise Exception("Something went wrong")
 
         return initialised
 
@@ -190,8 +193,11 @@ class SemanticChecker:
             self.__check_expression(condition.expr1, scopes, initialised)
             self.__check_expression(condition.expr2, scopes, initialised)
 
+        elif isinstance(condition, NoSymbolCondition):
+            self.__check_expression(condition.expr, scopes, initialised)
+
         else:
-            raise Exception("Unexpected error")
+            raise Exception("Something went wrong")
 
 
     def __check_if_statement(self, statement: IfStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:

@@ -65,6 +65,10 @@ class ASTBuilder(Transformer):
         return ForStatement(initial, condition, increment, loop_block)
 
 
+    def no_symbol_condition(self, expr) -> Condition:
+        return NoSymbolCondition(expr)
+
+
     def greater_than(self, expr1, expr2) -> Condition:
         return GreaterThanCondition(expr1, expr2)
 
