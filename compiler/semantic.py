@@ -24,35 +24,38 @@ class SemanticChecker:
         pass
 
 
-    def check(self, ast: Block) -> None:
+    def check(self, ast: Program) -> None:
         """
             Entry point to the semantic checker
             Checks if an AST for a program is valid, raising a SemanticError if not
         """
-        self.__check_block(ast, [{}], set())
+        self.__check_block(ast.block, [{}], set())
 
     
-    def __check_block(self, block: Block, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+    def __check_block(self, block: Block, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
             Checks if a block of code is valid, raising a SemanticError if not
+            Returns set of initialised variables
         """
 
         for statement in block.statements: # iterate through all statements in the block
 
             if isinstance(statement, VarDeclaration):
-                self.__check_declaration(statement, scopes, initialised)
+                initialised = self.__check_declaration(statement, scopes, initialised)
 
             elif isinstance(statement, Assignment):
-                self.__check_declaration(statement, scopes, initialised)
+                initialised = self.__check_assignment(statement, scopes, initialised)
 
             elif isinstance(statement, IfStatement):
-                self.__check_if_statement(statement, scopes, initialised)
+                initialised = self.__check_if_statement(statement, scopes, initialised)
 
             elif isinstance(statement, WhileStatement):
-                self.__check_while_loop(statement, scopes, initialised)
+                initialised = self.__check_while_loop(statement, scopes, initialised)
 
             elif isinstance(statement, ForStatement):
-                self.__check_for_loop(statement, scopes, initialised)
+                initialised = self.__check_for_loop(statement, scopes, initialised)
+
+        return initialised
 
 
     def __lookup_variable(self, var_name: str, scopes: list[dict[str, SymbolData]]) -> SymbolData:
@@ -78,23 +81,23 @@ class SemanticChecker:
         """ 
 
         if isinstance(expr, AddExpression):
-            self.__check_expression(expr.expr1)
-            self.__check_expression(expr.expr2)
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
 
         elif isinstance(expr, SubExpression):
-            self.__check_expression(expr.expr1)
-            self.__check_expression(expr.expr2)
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
 
         elif isinstance(expr, MulExpression):
-            self.__check_expression(expr.expr1)
-            self.__check_expression(expr.expr2)
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
 
         elif isinstance(expr, DivExpression):
-            self.__check_expression(expr.expr1)
-            self.__check_expression(expr.expr2)
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
 
         elif isinstance(expr, NegatedExpression):
-            self.__check_expression(expr)
+            self.__check_expression(expr.expr, scopes, initialised)
 
         elif isinstance(expr, Number):
             pass
@@ -109,7 +112,8 @@ class SemanticChecker:
             raise Exception("something went wrong")
 
 
-    def __check_assignment(self, assignment: Assignment, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+
+    def __check_assignment(self, assignment: Assignment, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
             Check if a variable assignment statement is valid given the current stack of variable scopes,
             and set of initialised variables. This requires:
@@ -119,20 +123,25 @@ class SemanticChecker:
             3. data types to match (TODO)
 
             Raises a SemanticError if not valid
+            Returns the modified set of initialised values
         """
-
+        
         self.__lookup_variable(assignment.var_name, scopes)
         self.__check_expression(assignment.value, scopes, initialised)
+        initialised.add(assignment.var_name) # add to set of initialised values
+
+        return initialised
         
 
 
-    def __check_declaration(self, declaration: VarDeclaration, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+    def __check_declaration(self, declaration: VarDeclaration, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
             Check if a variable declaration statement is valid
             given the current stack of variable scopes,
             and set of initialised variables 
 
             Raises a SemanticError if not valid
+            Returns the modified set of initialised values
         """
 
         if declaration.var_name in scopes[-1]: # variable exists already
@@ -143,6 +152,9 @@ class SemanticChecker:
         
         else:
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=True)
+            initialised.add(declaration.var_name)
+
+        return initialised
 
 
     def __check_condition(self, condition: Condition, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
@@ -180,51 +192,61 @@ class SemanticChecker:
             raise Exception("Unexpected error")
 
 
-    def __check_if_statement(self, statement: IfStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+    def __check_if_statement(self, statement: IfStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
             Checks if an if statement is valid, raises a SemanticError if not. Requires:
             1. condition is valid
             2. true branch is valid
             3. false branch is valid (if it exists)
+
+            Returns modified set of initialised values
         """
 
-        # check the condition is valid
-        self.__check_condition(statement.condition, scopes, initialised)
+        self.__check_condition(statement.condition, scopes, initialised) # check condition is valid
 
-        # check true branch
-        self.__check_block(statement.true_branch)
+        original = initialised.copy() # copy set of initialised values
+        true_initialised = self.__check_block(statement.true_branch, scopes + [{}], original) # add new scope!!
 
-        # check false branch if it exists
-        if statement.false_branch is not None:
-            self.__check_block(statement.false_branch)
+        if statement.false_branch is not None: # check false branch if it exists
+            false_initialised = self.__check_block(statement.false_branch, scopes + [{}], original) # add new scope!!
+        else:
+            false_initialised = set() # if the branch doesn't exist
+
+        return true_initialised & false_initialised # variable initialised only if initialised in both
 
 
-    def __check_while_loop(self, loop: WhileStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+    def __check_while_loop(self, loop: WhileStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
             Checks if a while loop is valid, raises a SemanticError if not. Requires:
             1. condition is valid
             2. loop body is valid
+
+            Returns modified set of initialised values
         """
 
-        # check the condition is valid
-        self.__check_condition(loop.condition, scopes, initialised)
+        self.__check_condition(loop.condition, scopes, initialised) # check the condition is valid
 
-        # check the loop body
-        self.__check_block(loop.loop_body, scopes, initialised)
+        original = initialised.copy()
+        self.__check_block(loop.loop_body, scopes + [{}], original) # check the loop body
+
+        return initialised
 
 
-    def __check_for_loop(self, loop: ForStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+    def __check_for_loop(self, loop: ForStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
             Checks if a for loop is valid, raises a SemanticError if not. Requires:    
             1. three for loop statements are valid
             2. loop body is valid
+
+            Returns set of initialised values
         """
 
-        # check for loop statements are valid
-        self.__check_assignment(loop.initial, scopes, initialised)
-        self.__check_condition(loop.condition, scopes, initialised)
-        self.__check_assignment(loop.increment, scopes, initialised)
+        self.__check_assignment(loop.initial, scopes, initialised) # check initial statement is valid
+        self.__check_condition(loop.condition, scopes, initialised) # check loop condition is valid
+        self.__check_assignment(loop.increment, scopes, initialised) # check loop increment is valid
 
-        # check the loop body
-        self.__check_block(loop.loop_body, scopes, initialised)
+        original = initialised.copy()
+        self.__check_block(loop.loop_body, scopes + [{}], original) # check loop body is valid
+
+        return initialised
 
