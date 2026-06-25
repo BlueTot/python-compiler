@@ -1,4 +1,7 @@
-?start: block
+?start: program 
+
+// a program is a block
+?program: block
 
 // a block is zero or more statements
 ?block: statement*

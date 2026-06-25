@@ -21,6 +21,9 @@ class ASTBuilder(Transformer):
         performs no semantic analysis at all
     """
 
+    def program(self, block) -> Program:
+        return Program(block)
+
 
     def block(self, *statements) -> Block:
         return Block(list(statements))

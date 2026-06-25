@@ -100,6 +100,11 @@ class Statement:
 class Block:
     statements: list[Statement]
 
+# program
+@dataclass
+class Program:
+    block: Block
+
 # data type
 class DataType(Enum):
     INT_TYPE = 1
