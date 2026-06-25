@@ -139,7 +139,7 @@ class WhileStatement(Statement):
 # for loop statement
 @dataclass
 class ForStatement(Statement):
-    initial: VarDeclaration | Statement
+    initial: Assignment
     condition: Condition
-    increment: Statement 
+    increment: Assignment 
     loop_body: Block

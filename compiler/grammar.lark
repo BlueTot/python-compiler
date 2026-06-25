@@ -39,7 +39,7 @@ variable_declaration: datatype NAME -> var_declaration
 
 
 // for loop
-?for_statement: "for" "(" (variable_declaration | assignment) ";" condition ";" assignment ")" "{" block "}"
+?for_statement: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
 
 
 // condition
