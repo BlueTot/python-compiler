@@ -68,7 +68,7 @@ class SemanticChecker:
             if var_name in scope:
                 return scope[var_name]
 
-        raise SemanticError(f"Variable `{var_name}` does not exist")
+        raise SemanticError(f"Variable '{var_name}' is not declared")
 
 
     def __check_expression(self, expr: Expression, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
@@ -106,7 +106,7 @@ class SemanticChecker:
             var_name = expr.name
             self.__lookup_variable(var_name, scopes) # check if variable exists
             if var_name not in initialised: # check if variable is initialised
-                raise SemanticError(f"Variable `{var_name}` is not initialised")
+                raise SemanticError(f"Variable '{var_name}' might be uninitialised")
             
         else:
             raise Exception("something went wrong")
