@@ -1,0 +1,8 @@
+int cond;
+int x;
+cond = 1;
+x = 0;
+while (cond) {
+    x = x + 1;
+    cond = x - 5;
+}

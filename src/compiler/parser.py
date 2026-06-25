@@ -1,6 +1,6 @@
-from lark import Transformer, v_args
+from lark import Transformer, v_args, Token
 from dataclasses import dataclass
-from ast_nodes import *
+from .ast_nodes import *
 
 
 # variable registry tuple
@@ -37,16 +37,16 @@ class ASTBuilder(Transformer):
         return DataType.BOOL_TYPE
 
 
-    def var_declaration(self, datatype, var_name) -> VarDeclaration:
-        return VarDeclaration(datatype, var_name, None)
+    def var_declaration(self, datatype, var_name_token: Token) -> VarDeclaration:
+        return VarDeclaration(datatype, var_name_token.value, None)
 
 
-    def var_declaration_with_value(self, datatype, var_name, value) -> VarDeclaration:
-        return VarDeclaration(datatype, var_name, value)
+    def var_declaration_with_value(self, datatype, var_name_token: Token, value) -> VarDeclaration:
+        return VarDeclaration(datatype, var_name_token.value, value)
 
 
-    def assignment(self, var_name, var_expression) -> Assignment:
-        return Assignment(var_name, var_expression)
+    def assignment(self, var_name_token: Token, var_expression) -> Assignment:
+        return Assignment(var_name_token.value, var_expression)
 
 
     def if_only_statement(self, condition, if_block) -> IfStatement:
@@ -63,6 +63,10 @@ class ASTBuilder(Transformer):
 
     def for_statement(self, initial, condition, increment, loop_block) -> ForStatement:
         return ForStatement(initial, condition, increment, loop_block)
+
+
+    def no_symbol_condition(self, expr) -> Condition:
+        return NoSymbolCondition(expr)
 
 
     def greater_than(self, expr1, expr2) -> Condition:
@@ -105,15 +109,15 @@ class ASTBuilder(Transformer):
         return DivExpression(expr1, expr2)
 
 
-    def number(self, value) -> Number:
-        return Number(value)
+    def number(self, token: Token) -> Number:
+        return Number(token.value)
 
 
     def neg(self, expr) -> Expression:
         return NegatedExpression(expr)
 
 
-    def var(self, name) -> Variable:
-        return Variable(name)
+    def var(self, token: Token) -> Variable:
+        return Variable(token.value)
 
 

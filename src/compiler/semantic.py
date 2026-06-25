@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ast_nodes import *
+from .ast_nodes import *
 
 
 class SemanticError(Exception):
@@ -55,6 +55,9 @@ class SemanticChecker:
             elif isinstance(statement, ForStatement):
                 initialised = self.__check_for_loop(statement, scopes, initialised)
 
+            else:
+                raise Exception("Something went wrong")
+
         return initialised
 
 
@@ -68,7 +71,7 @@ class SemanticChecker:
             if var_name in scope:
                 return scope[var_name]
 
-        raise SemanticError(f"Variable `{var_name}` does not exist")
+        raise SemanticError(f"Variable '{var_name}' is not declared")
 
 
     def __check_expression(self, expr: Expression, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
@@ -106,7 +109,7 @@ class SemanticChecker:
             var_name = expr.name
             self.__lookup_variable(var_name, scopes) # check if variable exists
             if var_name not in initialised: # check if variable is initialised
-                raise SemanticError(f"Variable `{var_name}` is not initialised")
+                raise SemanticError(f"Variable '{var_name}' might be uninitialised")
             
         else:
             raise Exception("something went wrong")
@@ -144,14 +147,22 @@ class SemanticChecker:
             Returns the modified set of initialised values
         """
 
-        if declaration.var_name in scopes[-1]: # variable exists already
-            raise SemanticError(f"Variable with name `{declaration.var_name} already declared")
+        # check if variable exists already
+        var_exists: bool = False
+        try:
+            self.__lookup_variable(declaration.var_name, scopes) 
+            var_exists = True
+        except SemanticError:
+            pass
+        if var_exists:
+            raise SemanticError(f"Variable '{declaration.var_name}' is already declared")
 
         if declaration.value is None: # declaration only
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=False)
         
-        else:
+        else: # declaration + initial assignment
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=True)
+            self.__check_expression(declaration.value, scopes, initialised) # check initial expression
             initialised.add(declaration.var_name)
 
         return initialised
@@ -188,8 +199,11 @@ class SemanticChecker:
             self.__check_expression(condition.expr1, scopes, initialised)
             self.__check_expression(condition.expr2, scopes, initialised)
 
+        elif isinstance(condition, NoSymbolCondition):
+            self.__check_expression(condition.expr, scopes, initialised)
+
         else:
-            raise Exception("Unexpected error")
+            raise Exception("Something went wrong")
 
 
     def __check_if_statement(self, statement: IfStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:

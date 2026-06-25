@@ -1,0 +1,10 @@
+int cond;
+int x;
+int y;
+cond = 1;
+if (cond) {
+    x = 5;
+} else {
+    y = 7;
+}
+y = x + 1;

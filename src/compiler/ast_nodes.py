@@ -54,6 +54,11 @@ class Variable(Expression):
 class Condition:
     pass
 
+# condition with no operator
+@dataclass
+class NoSymbolCondition(Condition):
+    expr: Expression
+
 # condition with > operator
 @dataclass
 class GreaterThanCondition(Condition):
