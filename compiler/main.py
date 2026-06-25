@@ -22,7 +22,7 @@ def main() -> None:
         program = f.read()
 
     ast = parser.parse(program)
-    print(ast)
+    # print(ast)
 
     SemanticChecker().check(ast)
     

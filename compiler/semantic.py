@@ -202,15 +202,15 @@ class SemanticChecker:
             Returns modified set of initialised values
         """
 
+
         self.__check_condition(statement.condition, scopes, initialised) # check condition is valid
 
-        original = initialised.copy() # copy set of initialised values
-        true_initialised = self.__check_block(statement.true_branch, scopes + [{}], original) # add new scope!!
+        true_initialised = self.__check_block(statement.true_branch, scopes + [{}], initialised.copy()) # add new scope!!
 
         if statement.false_branch is not None: # check false branch if it exists
-            false_initialised = self.__check_block(statement.false_branch, scopes + [{}], original) # add new scope!!
+            false_initialised = self.__check_block(statement.false_branch, scopes + [{}], initialised.copy()) # add new scope!!
         else:
-            false_initialised = set() # if the branch doesn't exist
+            false_initialised = initialised # if the branch doesn't exist
 
         return true_initialised & false_initialised # variable initialised only if initialised in both
 
@@ -226,8 +226,7 @@ class SemanticChecker:
 
         self.__check_condition(loop.condition, scopes, initialised) # check the condition is valid
 
-        original = initialised.copy()
-        self.__check_block(loop.loop_body, scopes + [{}], original) # check the loop body
+        self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check the loop body
 
         return initialised
 
@@ -245,8 +244,7 @@ class SemanticChecker:
         self.__check_condition(loop.condition, scopes, initialised) # check loop condition is valid
         self.__check_assignment(loop.increment, scopes, initialised) # check loop increment is valid
 
-        original = initialised.copy()
-        self.__check_block(loop.loop_body, scopes + [{}], original) # check loop body is valid
+        self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check loop body is valid
 
         return initialised
 
