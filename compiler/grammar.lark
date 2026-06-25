@@ -1,7 +1,10 @@
-?start: block
+?start: program 
+
+// a program is a block
+program: block
 
 // a block is zero or more statements
-?block: statement*
+block: statement*
 
 
 // statement
@@ -13,7 +16,7 @@
 
 
 // datatype
-?datatype: "int" -> int_type
+datatype: "int" -> int_type
     | "bool" -> bool_type
 
 
@@ -23,20 +26,20 @@ variable_declaration: datatype NAME -> var_declaration
 
 
 // assignment
-?assignment: NAME "=" expression
+assignment: NAME "=" expression
 
 
 // if statement
-?if_statement: "if" "(" condition ")" "{" block "}" -> if_only_statement 
+if_statement: "if" "(" condition ")" "{" block "}" -> if_only_statement 
     | "if" "(" condition ")" "{" block "}" "else" "{" block "}" -> if_and_else_statement
 
 
 // while loop
-?while_statement: "while" "(" condition ")" "{" block "}"
+while_statement: "while" "(" condition ")" "{" block "}"
 
 
 // for loop
-?for_statement: "for" "(" (variable_declaration | assignment) ";" condition ";" assignment ")" "{" block "}"
+for_statement: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
 
 
 // condition

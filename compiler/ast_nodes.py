@@ -100,6 +100,11 @@ class Statement:
 class Block:
     statements: list[Statement]
 
+# program
+@dataclass
+class Program:
+    block: Block
+
 # data type
 class DataType(Enum):
     INT_TYPE = 1
@@ -134,7 +139,7 @@ class WhileStatement(Statement):
 # for loop statement
 @dataclass
 class ForStatement(Statement):
-    initial: VarDeclaration | Statement
+    initial: Assignment
     condition: Condition
-    increment: Statement 
+    increment: Assignment 
     loop_body: Block
