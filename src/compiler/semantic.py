@@ -148,7 +148,14 @@ class SemanticChecker:
             Returns the modified set of initialised values
         """
 
-        if declaration.var_name in scopes[-1]: # variable exists already
+        # check if variable exists already
+        var_exists: bool = False
+        try:
+            self.__lookup_variable(declaration.var_name, scopes) 
+            var_exists = True
+        except SemanticError:
+            pass
+        if var_exists:
             raise SemanticError(f"Variable '{declaration.var_name}' is already declared")
 
         if declaration.value is None: # declaration only
