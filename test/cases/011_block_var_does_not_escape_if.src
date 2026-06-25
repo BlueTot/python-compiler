@@ -1,0 +1,7 @@
+int cond;
+cond = 1;
+if (cond) {
+    int x;
+    x = 5;
+}
+x = 6;

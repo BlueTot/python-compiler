@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ast_nodes import *
+from .ast_nodes import *
 
 
 class SemanticError(Exception):

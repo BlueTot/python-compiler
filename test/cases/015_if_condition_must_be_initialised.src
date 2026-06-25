@@ -1,0 +1,5 @@
+int cond;
+if (cond) {
+    int x;
+    x = 1;
+}

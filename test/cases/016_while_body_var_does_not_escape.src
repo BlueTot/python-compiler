@@ -1,0 +1,7 @@
+int cond;
+cond = 0;
+while (cond) {
+    int x;
+    x = 1;
+}
+x = 2;

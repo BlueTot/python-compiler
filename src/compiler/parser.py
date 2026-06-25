@@ -1,6 +1,6 @@
 from lark import Transformer, v_args
 from dataclasses import dataclass
-from ast_nodes import *
+from .ast_nodes import *
 
 
 # variable registry tuple
