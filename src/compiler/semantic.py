@@ -33,6 +33,7 @@ class SemanticChecker:
 
     
     def __check_block(self, block: Block, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
+        print(block)
         """
             Checks if a block of code is valid, raising a SemanticError if not
             Returns set of initialised variables
@@ -145,13 +146,14 @@ class SemanticChecker:
         """
 
         if declaration.var_name in scopes[-1]: # variable exists already
-            raise SemanticError(f"Variable with name `{declaration.var_name} already declared")
+            raise SemanticError(f"Variable '{declaration.var_name}' is already declared")
 
         if declaration.value is None: # declaration only
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=False)
         
-        else:
+        else: # declaration + initial assignment
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=True)
+            self.__check_expression(declaration.value, scopes, initialised) # check initial expression
             initialised.add(declaration.var_name)
 
         return initialised
