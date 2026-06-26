@@ -83,22 +83,90 @@ class SemanticChecker:
             Raises a SemanticError if not valid
         """ 
 
-        if isinstance(expr, AddExpression):
+        # logical or expression (bool || bool -> bool), level 1
+        if isinstance(expr, LogicalOrExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+        
+        # logical and expression (bool && bool -> bool), level 2
+        elif isinstance(expr, LogicalAndExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
+        # bitwise or expression (int | int -> int), level 3
+        elif isinstance(expr, BitwiseOrExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # bitwise xor expression (int | int -> int), level 4
+        elif isinstance(expr, BitwiseXorExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+            
+        # bitwise and expression (int | int -> int), level 5
+        elif isinstance(expr, BitwiseAndExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # equals expression (int == int -> bool), level 6
+        elif isinstance(expr, EqualsExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # equals expression (int != int -> bool), level 6
+        elif isinstance(expr, NotEqualsExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # greater than expression (int > int -> bool), level 7
+        elif isinstance(expr, GreaterThanExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # less than expression (int < int -> int), level 7
+        elif isinstance(expr, LessThanExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # greater than or equal expression (int >= int -> int), level 7
+        elif isinstance(expr, GreaterThanOrEqualExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # less than or equal expression (int <= int -> int), level 7
+        elif isinstance(expr, LessThanOrEqualExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # add expression (int + int -> int), level 8
+        elif isinstance(expr, AddExpression):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # subtraction expression (int + int -> int), level 8
         elif isinstance(expr, SubExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
+        # multiplication expression (int * int -> int), level 9
         elif isinstance(expr, MulExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
+        # division expression (int / int -> int), level 9
         elif isinstance(expr, DivExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
+        # logical not expression (!bool -> bool), level 10
+        elif isinstance(expr, LogicalNotExpression): 
+            self.__check_expression(expr.expr, scopes, initialised)
+
+        # bitwise not expression (~int -> int), level 10
+        elif isinstance(expr, BitwiseNotExpression):
+            self.__check_expression(expr.expr, scopes, initialised)
+
+        # negation expression (-int -> int), level 10
         elif isinstance(expr, NegatedExpression):
             self.__check_expression(expr.expr, scopes, initialised)
 
@@ -113,7 +181,6 @@ class SemanticChecker:
             
         else:
             raise Exception("something went wrong")
-
 
 
     def __check_assignment(self, assignment: Assignment, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
@@ -168,43 +235,6 @@ class SemanticChecker:
         return initialised
 
 
-    def __check_condition(self, condition: Condition, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
-        """
-            Check if a condition is valid, raises a SemanticError if not valid. Requires:
-            1. two sides of comparator are valid expressions
-            2. boolean operation can be applied (TODO)
-        """
-
-        if isinstance(condition, GreaterThanCondition):
-            self.__check_expression(condition.expr1, scopes, initialised)
-            self.__check_expression(condition.expr2, scopes, initialised)
-            
-        elif isinstance(condition, LessThanCondition):
-            self.__check_expression(condition.expr1, scopes, initialised)
-            self.__check_expression(condition.expr2, scopes, initialised)
-
-        elif isinstance(condition, GreaterThanOrEqualCondition):
-            self.__check_expression(condition.expr1, scopes, initialised)
-            self.__check_expression(condition.expr2, scopes, initialised)
-
-        elif isinstance(condition, LessThanOrEqualCondition):
-            self.__check_expression(condition.expr1, scopes, initialised)
-            self.__check_expression(condition.expr2, scopes, initialised)
-
-        elif isinstance(condition, EqualsCondition):
-            self.__check_expression(condition.expr1, scopes, initialised)
-            self.__check_expression(condition.expr2, scopes, initialised)
-
-        elif isinstance(condition, NotEqualsCondition):
-            self.__check_expression(condition.expr1, scopes, initialised)
-            self.__check_expression(condition.expr2, scopes, initialised)
-
-        elif isinstance(condition, NoSymbolCondition):
-            self.__check_expression(condition.expr, scopes, initialised)
-
-        else:
-            raise Exception("Something went wrong")
-
 
     def __check_if_statement(self, statement: IfStatement, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> set[str]:
         """
@@ -217,7 +247,7 @@ class SemanticChecker:
         """
 
 
-        self.__check_condition(statement.condition, scopes, initialised) # check condition is valid
+        self.__check_expression(statement.condition, scopes, initialised) # check condition is valid
 
         true_initialised = self.__check_block(statement.true_branch, scopes + [{}], initialised.copy()) # add new scope!!
 
@@ -238,7 +268,7 @@ class SemanticChecker:
             Returns modified set of initialised values
         """
 
-        self.__check_condition(loop.condition, scopes, initialised) # check the condition is valid
+        self.__check_expression(loop.condition, scopes, initialised) # check the condition is valid
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check the loop body
 
@@ -255,7 +285,7 @@ class SemanticChecker:
         """
 
         self.__check_assignment(loop.initial, scopes, initialised) # check initial statement is valid
-        self.__check_condition(loop.condition, scopes, initialised) # check loop condition is valid
+        self.__check_expression(loop.condition, scopes, initialised) # check loop condition is valid
         self.__check_assignment(loop.increment, scopes, initialised) # check loop increment is valid
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check loop body is valid
