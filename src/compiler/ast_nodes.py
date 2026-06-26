@@ -10,90 +10,120 @@ Dataclasses for AST nodes
 class Expression:
     pass
 
-# addition of two expressions
+# logical OR of two expressions (level 1)
+@dataclass
+class LogicalOrExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# logical AND of two expressions (level 2)
+@dataclass
+class LogicalAndExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# bitwise OR of two expressions (level 3)
+@dataclass
+class BitwiseOrExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# bitwise XOR of two expressions (level 4)
+@dataclass
+class BitwiseXorExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# bitwise AND of two expressions (level 5)
+class BitwiseAndExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# expression with == operator (level 6)
+@dataclass
+class EqualsExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# expression with != operator (level 6)
+@dataclass
+class NotEqualsExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+
+# expression with > operator (level 7)
+@dataclass
+class GreaterThanExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# expression with < operator (level 7)
+@dataclass
+class LessThanExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# expression with >= operator (level 7)
+@dataclass
+class GreaterThanOrEqualExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# expression with <= operator (level 7)
+@dataclass
+class LessThanOrEqualExpression(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# addition of two expressions (level 8)
 @dataclass
 class AddExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# subtraction of two expressions
+# subtraction of two expressions (level 8)
 @dataclass
 class SubExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# multiplication of two expressions
+# multiplication of two expressions (level 9)
 @dataclass
 class MulExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# division of two expressions
+# division of two expressions (level 9)
 @dataclass
 class DivExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# negation of an expression
+# logical NOT of an expression (level 10)
+@dataclass
+class LogicalNotExpression(Expression):
+    expr: Expression
+
+# bitwise NOT of an expression (level 10)
+@dataclass
+class BitwiseNotExpression(Expression):
+    expr: Expression
+
+# negation of an expression (level 10)
 @dataclass
 class NegatedExpression(Expression):
     expr: Expression
 
-# number node
+# number expression
 @dataclass
 class Number(Expression):
     value: int
 
-# variable node
+# variable expression
 @dataclass
 class Variable(Expression):
     name: str
-
-# condition built out of expressions
-@dataclass
-class Condition:
-    pass
-
-# condition with no operator
-@dataclass
-class NoSymbolCondition(Condition):
-    expr: Expression
-
-# condition with > operator
-@dataclass
-class GreaterThanCondition(Condition):
-    expr1: Expression
-    expr2: Expression
-
-# condition with < operator
-@dataclass
-class LessThanCondition(Condition):
-    expr1: Expression
-    expr2: Expression
-
-# condition with == operator
-@dataclass
-class EqualsCondition(Condition):
-    expr1: Expression
-    expr2: Expression
-
-# condition with != operator
-@dataclass
-class NotEqualsCondition(Condition):
-    expr1: Expression
-    expr2: Expression
-
-# condition with >= operator
-@dataclass
-class GreaterThanOrEqualCondition(Condition):
-    expr1: Expression
-    expr2: Expression
-
-# condition with <= operator
-@dataclass
-class LessThanOrEqualCondition(Condition):
-    expr1: Expression
-    expr2: Expression
 
 # statement
 @dataclass
@@ -131,20 +161,20 @@ class Assignment(Statement):
 # if statement
 @dataclass
 class IfStatement(Statement):
-    condition: Condition 
+    condition: Expression 
     true_branch: Block
     false_branch: Block | None
 
 # while loop statement
 @dataclass
 class WhileStatement(Statement):
-    condition: Condition
+    condition: Expression 
     loop_body: Block
 
 # for loop statement
 @dataclass
 class ForStatement(Statement):
     initial: Assignment
-    condition: Condition
+    condition: Expression 
     increment: Assignment 
     loop_body: Block

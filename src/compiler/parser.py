@@ -65,58 +65,102 @@ class ASTBuilder(Transformer):
         return ForStatement(initial, condition, increment, loop_block)
 
 
-    def no_symbol_condition(self, expr) -> Condition:
-        return NoSymbolCondition(expr)
+    # logical or - precdence level 1
+    def logical_or(self, expr1, expr2) -> Expression:
+        return LogicalOrExpression(expr1, expr2)
 
 
-    def greater_than(self, expr1, expr2) -> Condition:
-        return GreaterThanCondition(expr1, expr2)
+    # logical and - precedence level 2
+    def logical_and(self, expr1, expr2) -> Expression:
+        return LogicalAndExpression(expr1, expr2)
 
 
-    def less_than(self, expr1, expr2) -> Condition:
-        return LessThanCondition(expr1, expr2)
+    # bitwise or - precedence level 3
+    def bitwise_or(self, expr1, expr2) -> Expression:
+        return BitwiseOrExpression(expr1, expr2)
 
 
-    def not_equal_to(self, expr1, expr2) -> Condition:
-        return NotEqualsCondition(expr1, expr2)
+    # bitwise xor - precedence level 4
+    def bitwise_xor(self, expr1, expr2) -> Expression:
+        return BitwiseXorExpression(expr1, expr2)
 
 
-    def equal_to(self, expr1, expr2) -> Condition:
-        return EqualsCondition(expr1, expr2)
+    # bitwise and - precedence level 5
+    def bitwise_and(self, expr1, expr2) -> Expression:
+        return BitwiseAndExpression(expr1, expr2)
 
 
-    def greater_than_equal(self, expr1, expr2) -> Condition:
-        return GreaterThanOrEqualCondition(expr1, expr2)
+    # eqaulity operator - precedence level 6
+    def equal_to(self, expr1, expr2) -> Expression:
+        return EqualsExpression(expr1, expr2)
 
 
-    def less_than_equal(self, expr1, expr2) -> Condition:
-        return LessThanOrEqualCondition(expr1, expr2)
+    # not equal operator - precedence level 6
+    def not_equal_to(self, expr1, expr2) -> Expression:
+        return NotEqualsExpression(expr1, expr2)
 
 
+    # greater than operator - precedence level 7
+    def greater_than(self, expr1, expr2) -> Expression:
+        return GreaterThanExpression(expr1, expr2)
+
+
+    # less than operator - precedence level 7
+    def less_than(self, expr1, expr2) -> Expression:
+        return LessThanExpression(expr1, expr2)
+
+
+    # greater than or equal operator - precedence level 7
+    def greater_than_equal(self, expr1, expr2) -> Expression:
+        return GreaterThanOrEqualExpression(expr1, expr2)
+
+
+    # less than or equal operator - precedence level 7
+    def less_than_equal(self, expr1, expr2) -> Expression:
+        return LessThanOrEqualExpression(expr1, expr2)
+
+
+    # addition operator - precedence level 8
     def add(self, expr1, expr2) -> Expression:
         return AddExpression(expr1, expr2)
 
 
+    # subtraction operator - precedence level 8
     def sub(self, expr1, expr2) -> Expression:
         return SubExpression(expr1, expr2)
 
 
+    # multiplication operator - precedence level 9
     def mul(self, expr1, expr2) -> Expression:
         return MulExpression(expr1, expr2)
 
 
+    # multiplication operator - precedence level 9
     def div(self, expr1, expr2) -> Expression:
         return DivExpression(expr1, expr2)
 
+    
+    # logical not operator - precedence level 10
+    def logical_not(self, expr) -> Expression:
+        return LogicalNotExpression(expr)
 
-    def number(self, token: Token) -> Number:
-        return Number(token.value)
+
+    # bitwise not operator - precedence level 10
+    def bitwise_not(self, expr) -> Expression:
+        return BitwiseNotExpression(expr)
 
 
+    # unary negation operator - precedence level 10
     def neg(self, expr) -> Expression:
         return NegatedExpression(expr)
 
 
+    # number token
+    def number(self, token: Token) -> Number:
+        return Number(token.value)
+
+
+    # variable token
     def var(self, token: Token) -> Variable:
         return Variable(token.value)
 
