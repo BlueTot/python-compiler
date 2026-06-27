@@ -1,0 +1,4 @@
+bool a;
+int x;
+a = true;
+x = !a;

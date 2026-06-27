@@ -25,6 +25,7 @@ class SemanticChecker:
 
 
     def check(self, ast: Program) -> None:
+        print(ast)
         """
             Entry point to the semantic checker
             Checks if an AST for a program is valid, raising a SemanticError if not
@@ -74,123 +75,211 @@ class SemanticChecker:
         raise SemanticError(f"Variable '{var_name}' is not declared")
 
 
-    def __check_expression(self, expr: Expression, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> None:
+    def __check_expression(self, expr: Expression, scopes: list[dict[str, SymbolData]], initialised: set[str]) -> DataType:
         """
             Checks if an expression is valid, requiring:
             1. variables used must exist and be initialised
-            2. types must match (TODO)
+            2. types must match
 
+            Returns the data type of the expression if valid
             Raises a SemanticError if not valid
         """ 
 
         # logical or expression (bool || bool -> bool), level 1
         if isinstance(expr, LogicalOrExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, BoolType) and isinstance(type2, BoolType):
+                return BoolType()
+            raise SemanticError("Operator '||' requires bool operands")
         
         # logical and expression (bool && bool -> bool), level 2
         elif isinstance(expr, LogicalAndExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+            print(expr.expr1, expr.expr2, type1, type2)
+
+            if isinstance(type1, BoolType) and isinstance(type2, BoolType):
+                return BoolType()
+            print("HEYY")
+            raise SemanticError("Operator '&&' requires bool operands")
 
         # bitwise or expression (int | int -> int), level 3
         elif isinstance(expr, BitwiseOrExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
 
-        # bitwise xor expression (int | int -> int), level 4
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '|' requires int operands")
+
+        # bitwise xor expression (int ^ int -> int), level 4
         elif isinstance(expr, BitwiseXorExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '^' requires int operands")
             
-        # bitwise and expression (int | int -> int), level 5
+        # bitwise and expression (int & int -> int), level 5
         elif isinstance(expr, BitwiseAndExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
 
-        # equals expression (int == int -> bool), level 6
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '&' requires int operands")
+
+        # equals expression (any == any -> bool), level 6
         elif isinstance(expr, EqualsExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
 
-        # equals expression (int != int -> bool), level 6
+            if type(type1) != type(type2):
+                raise SemanticError("Operator '==' requires operands of the same type")
+
+            return BoolType()
+
+        # equals expression (any != any -> bool), level 6
         elif isinstance(expr, NotEqualsExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if type(type1) != type(type2):
+                raise SemanticError("Operator '!=' requires operands of the same type")
+
+            return BoolType()
 
         # greater than expression (int > int -> bool), level 7
         elif isinstance(expr, GreaterThanExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return BoolType()
+            raise SemanticError("Operator '>' requires int operands")
 
         # less than expression (int < int -> int), level 7
         elif isinstance(expr, LessThanExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return BoolType()
+            raise SemanticError("Operator '<' requires int operands")
 
         # greater than or equal expression (int >= int -> int), level 7
         elif isinstance(expr, GreaterThanOrEqualExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return BoolType()
+            raise SemanticError("Operator '>=' requires int operands")
 
         # less than or equal expression (int <= int -> int), level 7
         elif isinstance(expr, LessThanOrEqualExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return BoolType()
+            raise SemanticError("Operator '<=' requires int operands")
 
         # bitwise left shift expression (int << int -> int), level 8
         elif isinstance(expr, BitwiseLeftShift):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '<<' requires int operands")
 
         # bitwise right shift expression (int >> int -> int), level 8
         elif isinstance(expr, BitwiseRightShift):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '>>' requires int operands")
 
         # add expression (int + int -> int), level 9
         elif isinstance(expr, AddExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
 
-        # subtraction expression (int + int -> int), level 9
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '+' requires int operands")
+
+        # subtraction expression (int - int -> int), level 9
         elif isinstance(expr, SubExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '-' requires int operands")
 
         # multiplication expression (int * int -> int), level 10
         elif isinstance(expr, MulExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '*' requires int operands")
 
         # division expression (int / int -> int), level 10
         elif isinstance(expr, DivExpression):
-            self.__check_expression(expr.expr1, scopes, initialised)
-            self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if isinstance(type1, IntType) and isinstance(type2, IntType):
+                return IntType()
+            raise SemanticError("Operator '/' requires int operands")
 
         # logical not expression (!bool -> bool), level 11
         elif isinstance(expr, LogicalNotExpression): 
-            self.__check_expression(expr.expr, scopes, initialised)
+            type1 = self.__check_expression(expr.expr, scopes, initialised)
+
+            if isinstance(type1, BoolType):
+                return BoolType()
+            raise SemanticError("Operator '!' requires bool operand")
 
         # bitwise not expression (~int -> int), level 11
         elif isinstance(expr, BitwiseNotExpression):
-            self.__check_expression(expr.expr, scopes, initialised)
+            type1 = self.__check_expression(expr.expr, scopes, initialised)
+
+            if isinstance(type1, IntType):
+                return IntType()
+            raise SemanticError("Operator '~' requires int operand")
 
         # negation expression (-int -> int), level 11
         elif isinstance(expr, NegatedExpression):
-            self.__check_expression(expr.expr, scopes, initialised)
+            type1 = self.__check_expression(expr.expr, scopes, initialised)
+
+            if isinstance(type1, IntType):
+                return IntType()
+            raise SemanticError("Operator '-' requires int operand")
 
         elif isinstance(expr, Number):
-            pass
+            print(1)
+            return IntType() # number is int type
 
         elif isinstance(expr, BooleanConstant):
-            pass
+            print(2)
+            return BoolType() # true/false is boolean type
             
         elif isinstance(expr, Variable):
             var_name = expr.name
-            self.__lookup_variable(var_name, scopes) # check if variable exists
+            var_data = self.__lookup_variable(var_name, scopes) # check if variable exists
             if var_name not in initialised: # check if variable is initialised
                 raise SemanticError(f"Variable '{var_name}' might be uninitialised")
+            return var_data.datatype # return the variable's data type
             
         else:
             raise Exception("something went wrong")
@@ -209,8 +298,10 @@ class SemanticChecker:
             Returns the modified set of initialised values
         """
         
-        self.__lookup_variable(assignment.var_name, scopes)
-        self.__check_expression(assignment.value, scopes, initialised)
+        symbol_data = self.__lookup_variable(assignment.var_name, scopes)
+        datatype = self.__check_expression(assignment.value, scopes, initialised)
+        if symbol_data.datatype != datatype:
+            raise SemanticError(f"Cannot assign value of type {datatype} to variable '{assignment.var_name}' of type {symbol_data.datatype}")
         initialised.add(assignment.var_name) # add to set of initialised values
 
         return initialised
@@ -242,7 +333,11 @@ class SemanticChecker:
         
         else: # declaration + initial assignment
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=True)
-            self.__check_expression(declaration.value, scopes, initialised) # check initial expression
+
+            datatype = self.__check_expression(declaration.value, scopes, initialised) # check initial expression
+            if declaration.datatype != datatype: # check if expression's data type matches variable's declared data type
+                raise SemanticError(f"Cannot initialise variable '{declaration.var_name}' of type {declaration.datatype} with value of type {datatype}")
+
             initialised.add(declaration.var_name)
 
         return initialised
@@ -260,7 +355,9 @@ class SemanticChecker:
         """
 
 
-        self.__check_expression(statement.condition, scopes, initialised) # check condition is valid
+        datatype = self.__check_expression(statement.condition, scopes, initialised) # check condition is valid
+        if not isinstance(datatype, BoolType): # check condition has type bool
+            raise SemanticError("if condition must be bool")
 
         true_initialised = self.__check_block(statement.true_branch, scopes + [{}], initialised.copy()) # add new scope!!
 
@@ -281,7 +378,9 @@ class SemanticChecker:
             Returns modified set of initialised values
         """
 
-        self.__check_expression(loop.condition, scopes, initialised) # check the condition is valid
+        datatype = self.__check_expression(loop.condition, scopes, initialised) # check the condition is valid
+        if not isinstance(datatype, BoolType): # check condition has type bool
+            raise SemanticError("while condition must be bool")
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check the loop body
 
@@ -298,7 +397,11 @@ class SemanticChecker:
         """
 
         self.__check_assignment(loop.initial, scopes, initialised) # check initial statement is valid
-        self.__check_expression(loop.condition, scopes, initialised) # check loop condition is valid
+
+        datatype = self.__check_expression(loop.condition, scopes, initialised) # check loop condition is valid
+        if not isinstance(datatype, BoolType): # check condition has type bool
+            raise SemanticError("for condition must be bool")
+
         self.__check_assignment(loop.increment, scopes, initialised) # check loop increment is valid
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check loop body is valid

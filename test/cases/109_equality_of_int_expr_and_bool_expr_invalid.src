@@ -1,0 +1,6 @@
+int x;
+bool b;
+bool r;
+x = 1;
+b = true;
+r = (x + 1) == (b && true);

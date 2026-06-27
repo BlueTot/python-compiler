@@ -30,11 +30,11 @@ class ASTBuilder(Transformer):
 
 
     def int_type(self) -> DataType:
-        return DataType.INT_TYPE
+        return IntType()
 
 
     def bool_type(self) -> DataType:
-        return DataType.BOOL_TYPE
+        return BoolType()
 
 
     def var_declaration(self, datatype, var_name_token: Token) -> VarDeclaration:

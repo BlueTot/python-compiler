@@ -1,0 +1,6 @@
+bool b;
+int x;
+int y;
+b = true;
+x = 2;
+y = x * b;

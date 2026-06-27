@@ -1,0 +1,6 @@
+int x;
+bool b;
+int y;
+x = 8;
+b = false;
+y = x >> b;

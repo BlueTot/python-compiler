@@ -1,6 +1,6 @@
 int cond;
 cond = 0;
-while (cond) {
+while (cond > 0) {
     int x;
     x = 1;
 }

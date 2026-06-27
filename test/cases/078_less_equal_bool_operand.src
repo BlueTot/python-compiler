@@ -1,0 +1,6 @@
+bool b;
+int x;
+bool r;
+b = false;
+x = 3;
+r = b <= x;

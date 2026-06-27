@@ -1,0 +1,8 @@
+int i;
+bool cond;
+i = 0;
+cond = true;
+for (i = 0; cond; i = cond) {
+    int x;
+    x = i;
+}

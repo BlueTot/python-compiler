@@ -1,0 +1,1 @@
+SemanticError: Cannot initialise variable 'b' of type bool with value of type int

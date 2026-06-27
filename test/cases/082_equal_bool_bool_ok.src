@@ -1,0 +1,6 @@
+bool a;
+bool b;
+bool r;
+a = true;
+b = false;
+r = a == b;

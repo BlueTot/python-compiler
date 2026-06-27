@@ -1,0 +1,6 @@
+bool b;
+b = false;
+for (b = 0; b; b = true) {
+    int x;
+    x = 1;
+}

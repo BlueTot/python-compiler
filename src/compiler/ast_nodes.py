@@ -159,9 +159,20 @@ class Program:
 
 # data type
 @dataclass
-class DataType(Enum):
-    INT_TYPE = 1
-    BOOL_TYPE = 1
+class DataType:
+    pass
+
+# integer type
+@dataclass
+class IntType(DataType):
+    def __repr__(self):
+        return "int"
+
+# boolean type
+@dataclass
+class BoolType(DataType):
+    def __repr__(self):
+        return "bool"
 
 # variable declaration
 @dataclass

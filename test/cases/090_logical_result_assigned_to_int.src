@@ -1,0 +1,6 @@
+bool a;
+bool b;
+int x;
+a = true;
+b = false;
+x = a && b;

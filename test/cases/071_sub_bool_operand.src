@@ -1,0 +1,6 @@
+bool b;
+int x;
+int y;
+b = false;
+x = 1;
+y = x - b;

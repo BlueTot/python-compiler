@@ -1,0 +1,6 @@
+int x;
+int y;
+bool b;
+x = 1;
+y = 2;
+b = x & y;

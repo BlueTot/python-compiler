@@ -1,0 +1,1 @@
+SemanticError: Cannot assign value of type bool to variable 'i' of type int
