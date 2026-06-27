@@ -35,6 +35,7 @@ class BitwiseXorExpression(Expression):
     expr2: Expression
 
 # bitwise AND of two expressions (level 5)
+@dataclass
 class BitwiseAndExpression(Expression):
     expr1: Expression
     expr2: Expression
@@ -50,7 +51,6 @@ class EqualsExpression(Expression):
 class NotEqualsExpression(Expression):
     expr1: Expression
     expr2: Expression
-
 
 # expression with > operator (level 7)
 @dataclass

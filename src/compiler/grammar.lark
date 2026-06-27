@@ -87,7 +87,7 @@ for_statement: "for" "(" assignment ";" expression ";" assignment ")" "{" block 
 // bitwise operators (<<, >>)
 ?shift: sum
     | shift "<<" sum -> bitwise_left_shift
-    | shift ">>" sum -> bitwise_right_shit
+    | shift ">>" sum -> bitwise_right_shift
 
 
 // sum (plus, minus operators)
