@@ -1,7 +1,7 @@
 int cond;
 int x;
 cond = 1;
-if (cond) {
+if (cond > 0) {
     x = 5;
 } else {
     x = 7;

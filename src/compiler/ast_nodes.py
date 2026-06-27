@@ -165,12 +165,14 @@ class DataType:
 # integer type
 @dataclass
 class IntType(DataType):
-    pass
+    def __repr__(self):
+        return "int"
 
 # boolean type
 @dataclass
 class BoolType(DataType):
-    pass
+    def __repr__(self):
+        return "bool"
 
 # variable declaration
 @dataclass

@@ -290,8 +290,10 @@ class SemanticChecker:
             Returns the modified set of initialised values
         """
         
-        self.__lookup_variable(assignment.var_name, scopes)
-        self.__check_expression(assignment.value, scopes, initialised)
+        symbol_data = self.__lookup_variable(assignment.var_name, scopes)
+        datatype = self.__check_expression(assignment.value, scopes, initialised)
+        if symbol_data.datatype != datatype:
+            raise SemanticError(f"Cannot assign value of type {datatype} to variable '{assignment.var_name}' of type {symbol_data.datatype}")
         initialised.add(assignment.var_name) # add to set of initialised values
 
         return initialised
@@ -341,7 +343,9 @@ class SemanticChecker:
         """
 
 
-        self.__check_expression(statement.condition, scopes, initialised) # check condition is valid
+        datatype = self.__check_expression(statement.condition, scopes, initialised) # check condition is valid
+        if not isinstance(datatype, BoolType):
+            raise SemanticError("if condition must be bool")
 
         true_initialised = self.__check_block(statement.true_branch, scopes + [{}], initialised.copy()) # add new scope!!
 
@@ -362,7 +366,9 @@ class SemanticChecker:
             Returns modified set of initialised values
         """
 
-        self.__check_expression(loop.condition, scopes, initialised) # check the condition is valid
+        datatype = self.__check_expression(loop.condition, scopes, initialised) # check the condition is valid
+        if not isinstance(datatype, BoolType):
+            raise SemanticError("while condition must be bool")
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check the loop body
 

@@ -1,6 +1,6 @@
-int cond;
+bool cond;
 int x;
-cond = 1;
+cond = true;
 x = 0;
 while (cond) {
     x = x + 1;

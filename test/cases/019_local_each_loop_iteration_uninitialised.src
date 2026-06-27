@@ -1,6 +1,6 @@
 int cond;
 cond = 1;
-while (cond) {
+while (cond > 0) {
     int y;
     y = y + 1;
 }
