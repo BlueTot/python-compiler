@@ -159,9 +159,18 @@ class Program:
 
 # data type
 @dataclass
-class DataType(Enum):
-    INT_TYPE = 1
-    BOOL_TYPE = 1
+class DataType:
+    pass
+
+# integer type
+@dataclass
+class IntType(DataType):
+    pass
+
+# boolean type
+@dataclass
+class BoolType(DataType):
+    pass
 
 # variable declaration
 @dataclass
