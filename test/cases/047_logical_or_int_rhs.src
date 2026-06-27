@@ -1,0 +1,6 @@
+bool b;
+int x;
+bool c;
+b = true;
+x = 1;
+c = b || x;

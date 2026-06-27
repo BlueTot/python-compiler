@@ -30,45 +30,91 @@ assignment: NAME "=" expression
 
 
 // if statement
-if_statement: "if" "(" condition ")" "{" block "}" -> if_only_statement 
-    | "if" "(" condition ")" "{" block "}" "else" "{" block "}" -> if_and_else_statement
+if_statement: "if" "(" expression ")" "{" block "}" -> if_only_statement 
+    | "if" "(" expression ")" "{" block "}" "else" "{" block "}" -> if_and_else_statement
 
 
 // while loop
-while_statement: "while" "(" condition ")" "{" block "}"
+while_statement: "while" "(" expression ")" "{" block "}"
 
 
 // for loop
-for_statement: "for" "(" assignment ";" condition ";" assignment ")" "{" block "}"
+for_statement: "for" "(" assignment ";" expression ";" assignment ")" "{" block "}"
 
 
-// condition
-condition: expression -> no_symbol_condition
-    | expression ">" expression -> greater_than
-    | expression "<" expression -> less_than
-    | expression "==" expression -> equal_to
-    | expression "!=" expression -> not_equal_to
-    | expression ">=" expression -> greater_than_equal
-    | expression "<=" expression -> less_than_equal
+// arithemtic and logical expression
+?expression: logical_or
 
 
-// expression
-?expression: product
-    | expression "+" product   -> add
-    | expression "-" product   -> sub
+// logical or
+?logical_or: logical_and
+    | logical_or "||" logical_and -> logical_or
 
 
-// product
-?product: atom
-    | product "*" atom  -> mul
-    | product "/" atom  -> div
+// logical and
+?logical_and: bitwise_or
+        | logical_and "&&" bitwise_or -> logical_and
 
 
-// atom
-?atom: NUMBER           -> number
-        | "-" atom         -> neg
-        | NAME             -> var
-        | "(" expression ")"
+// bitwise OR
+?bitwise_or: bitwise_xor
+        | bitwise_or "|" bitwise_xor -> bitwise_or 
+
+
+// bitwise XOR
+?bitwise_xor: bitwise_and
+        | bitwise_xor "^" bitwise_and -> bitwise_xor
+
+
+// bitwise AND
+?bitwise_and: equality
+        | bitwise_and "&" equality -> bitwise_and
+
+
+// equality expression (==, != operators)
+?equality: relational "==" sum -> equal_to
+        | relational "!=" sum-> not_equal_to
+        | relational
+
+
+// relational expression (>, <, >=, <=, ==, != operators)
+?relational: shift
+    | shift ">" shift -> greater_than
+    | shift "<" shift -> less_than
+    | shift ">=" shift -> greater_than_equal
+    | shift "<=" shift -> less_than_equal
+
+// bitwise operators (<<, >>)
+?shift: sum
+    | shift "<<" sum -> bitwise_left_shift
+    | shift ">>" sum -> bitwise_right_shift
+
+
+// sum (plus, minus operators)
+?sum: product
+    | sum "+" product   -> add
+    | sum "-" product   -> sub
+
+
+// product (times, divides operators)
+?product: unary 
+    | product "*" unary  -> mul
+    | product "/" unary  -> div
+
+
+// unary (bitwise NOT, logical NOT, negation)
+?unary: "!" unary -> logical_not 
+    | "~" unary -> bitwise_not
+    | "-" unary -> neg
+    | atom
+
+
+// atom (number, variable, bracketed expression)
+?atom: NUMBER -> number
+    | "true" -> true
+    | "false" -> false
+    | NAME -> var
+    | "(" expression ")"
 
 
 %import common.CNAME -> NAME

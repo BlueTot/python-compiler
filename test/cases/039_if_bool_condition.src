@@ -1,0 +1,8 @@
+bool cond;
+int x;
+cond = true;
+if (cond) {
+    x = 1;
+} else {
+    x = 2;
+}

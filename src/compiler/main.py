@@ -32,6 +32,7 @@ def compile(program: str) -> None:
     try:
         ast = parser.parse(program)
     except LarkError as e:
+        print(e)
         raise CompileError("syntax error") from e
 
     SemanticChecker().check(ast)

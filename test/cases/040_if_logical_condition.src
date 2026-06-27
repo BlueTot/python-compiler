@@ -1,0 +1,10 @@
+bool a;
+bool b;
+int x;
+a = true;
+b = false;
+if (a && !b) {
+    x = 1;
+} else {
+    x = 2;
+}

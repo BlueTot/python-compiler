@@ -1,0 +1,4 @@
+int x;
+bool b;
+x = 3;
+b = x < 5;

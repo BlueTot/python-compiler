@@ -1,0 +1,8 @@
+bool cond;
+int x;
+cond = true;
+x = 0;
+while (cond && (x < 5)) {
+    x = x + 1;
+    cond = x < 3;
+}
