@@ -1,0 +1,7 @@
+int i;
+bool keep_going;
+i = 0;
+keep_going = true;
+for (i = 0; keep_going; i = i + 1) {
+    keep_going = i < 3;
+}
