@@ -165,12 +165,22 @@ class ASTBuilder(Transformer):
 
 
     # number token
-    def number(self, token: Token) -> Number:
+    def number(self, token: Token) -> Expression:
         return Number(token.value)
 
 
+    # true literal
+    def true(self) -> Expression:
+        return BooleanConstant(True)
+
+    
+    # false literal
+    def false(self) -> Expression:
+        return BooleanConstant(False)
+
+
     # variable token
-    def var(self, token: Token) -> Variable:
+    def var(self, token: Token) -> Expression:
         return Variable(token.value)
 
 

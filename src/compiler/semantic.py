@@ -182,6 +182,9 @@ class SemanticChecker:
 
         elif isinstance(expr, Number):
             pass
+
+        elif isinstance(expr, BooleanConstant):
+            pass
             
         elif isinstance(expr, Variable):
             var_name = expr.name

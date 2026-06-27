@@ -132,6 +132,11 @@ class NegatedExpression(Expression):
 class Number(Expression):
     value: int
 
+# boolean constant
+@dataclass
+class BooleanConstant(Expression):
+    value: bool
+
 # variable expression
 @dataclass
 class Variable(Expression):
@@ -153,6 +158,7 @@ class Program:
     block: Block
 
 # data type
+@dataclass
 class DataType(Enum):
     INT_TYPE = 1
     BOOL_TYPE = 1
