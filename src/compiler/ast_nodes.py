@@ -76,41 +76,53 @@ class LessThanOrEqualExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# addition of two expressions (level 8)
+# bitwise left shift (level 8)
+@dataclass
+class BitwiseLeftShift(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# bitwise right shift (level 8)
+@dataclass
+class BitwiseRightShift(Expression):
+    expr1: Expression
+    expr2: Expression
+
+# addition of two expressions (level 9)
 @dataclass
 class AddExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# subtraction of two expressions (level 8)
+# subtraction of two expressions (level 9)
 @dataclass
 class SubExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# multiplication of two expressions (level 9)
+# multiplication of two expressions (level 10)
 @dataclass
 class MulExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# division of two expressions (level 9)
+# division of two expressions (level 10)
 @dataclass
 class DivExpression(Expression):
     expr1: Expression
     expr2: Expression
 
-# logical NOT of an expression (level 10)
+# logical NOT of an expression (level 11)
 @dataclass
 class LogicalNotExpression(Expression):
     expr: Expression
 
-# bitwise NOT of an expression (level 10)
+# bitwise NOT of an expression (level 11)
 @dataclass
 class BitwiseNotExpression(Expression):
     expr: Expression
 
-# negation of an expression (level 10)
+# negation of an expression (level 11)
 @dataclass
 class NegatedExpression(Expression):
     expr: Expression

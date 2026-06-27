@@ -119,38 +119,47 @@ class ASTBuilder(Transformer):
     def less_than_equal(self, expr1, expr2) -> Expression:
         return LessThanOrEqualExpression(expr1, expr2)
 
+    # bitwise left shift operator - precedence level 8
+    def bitwise_left_shift(self, expr1, expr2) -> Expression:
+        return BitwiseLeftShift(expr1, expr2)
 
-    # addition operator - precedence level 8
+
+    # bitwise right shift operator - precedence level 8
+    def bitwise_right_shift(self, expr1, expr2) -> Expression:
+        return BitwiseRightShift(expr1, expr2)
+
+
+    # addition operator - precedence level 9
     def add(self, expr1, expr2) -> Expression:
         return AddExpression(expr1, expr2)
 
 
-    # subtraction operator - precedence level 8
+    # subtraction operator - precedence level 9
     def sub(self, expr1, expr2) -> Expression:
         return SubExpression(expr1, expr2)
 
 
-    # multiplication operator - precedence level 9
+    # multiplication operator - precedence level 10
     def mul(self, expr1, expr2) -> Expression:
         return MulExpression(expr1, expr2)
 
 
-    # multiplication operator - precedence level 9
+    # multiplication operator - precedence level 10
     def div(self, expr1, expr2) -> Expression:
         return DivExpression(expr1, expr2)
 
     
-    # logical not operator - precedence level 10
+    # logical not operator - precedence level 11
     def logical_not(self, expr) -> Expression:
         return LogicalNotExpression(expr)
 
 
-    # bitwise not operator - precedence level 10
+    # bitwise not operator - precedence level 11
     def bitwise_not(self, expr) -> Expression:
         return BitwiseNotExpression(expr)
 
 
-    # unary negation operator - precedence level 10
+    # unary negation operator - precedence level 11
     def neg(self, expr) -> Expression:
         return NegatedExpression(expr)
 

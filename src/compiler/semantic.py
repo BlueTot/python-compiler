@@ -138,35 +138,45 @@ class SemanticChecker:
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
-        # add expression (int + int -> int), level 8
+        # bitwise left shift expression (int << int -> int), level 8
+        elif isinstance(expr, BitwiseLeftShift):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # bitwise right shift expression (int >> int -> int), level 8
+        elif isinstance(expr, BitwiseRightShift):
+            self.__check_expression(expr.expr1, scopes, initialised)
+            self.__check_expression(expr.expr2, scopes, initialised)
+
+        # add expression (int + int -> int), level 9
         elif isinstance(expr, AddExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
-        # subtraction expression (int + int -> int), level 8
+        # subtraction expression (int + int -> int), level 9
         elif isinstance(expr, SubExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
-        # multiplication expression (int * int -> int), level 9
+        # multiplication expression (int * int -> int), level 10
         elif isinstance(expr, MulExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
-        # division expression (int / int -> int), level 9
+        # division expression (int / int -> int), level 10
         elif isinstance(expr, DivExpression):
             self.__check_expression(expr.expr1, scopes, initialised)
             self.__check_expression(expr.expr2, scopes, initialised)
 
-        # logical not expression (!bool -> bool), level 10
+        # logical not expression (!bool -> bool), level 11
         elif isinstance(expr, LogicalNotExpression): 
             self.__check_expression(expr.expr, scopes, initialised)
 
-        # bitwise not expression (~int -> int), level 10
+        # bitwise not expression (~int -> int), level 11
         elif isinstance(expr, BitwiseNotExpression):
             self.__check_expression(expr.expr, scopes, initialised)
 
-        # negation expression (-int -> int), level 10
+        # negation expression (-int -> int), level 11
         elif isinstance(expr, NegatedExpression):
             self.__check_expression(expr.expr, scopes, initialised)
 

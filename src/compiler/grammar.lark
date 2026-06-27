@@ -78,11 +78,16 @@ for_statement: "for" "(" assignment ";" expression ";" assignment ")" "{" block 
 
 
 // relational expression (>, <, >=, <=, ==, != operators)
-?relational: sum ">" sum -> greater_than
-    | sum "<" sum -> less_than
-    | sum ">=" sum -> greater_than_equal
-    | sum "<=" sum -> less_than_equal
-    | sum
+?relational: shift
+    | shift ">" shift -> greater_than
+    | shift "<" shift -> less_than
+    | shift ">=" shift -> greater_than_equal
+    | shift "<=" shift -> less_than_equal
+
+// bitwise operators (<<, >>)
+?shift: sum
+    | shift "<<" sum -> bitwise_left_shift
+    | shift ">>" sum -> bitwise_right_shit
 
 
 // sum (plus, minus operators)
