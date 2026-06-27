@@ -97,9 +97,9 @@ for_statement: "for" "(" assignment ";" expression ";" assignment ")" "{" block 
 
 
 // product (times, divides operators)
-?product: atom
-    | product "*" atom  -> mul
-    | product "/" atom  -> div
+?product: unary 
+    | product "*" unary  -> mul
+    | product "/" unary  -> div
 
 
 // unary (bitwise NOT, logical NOT, negation)
