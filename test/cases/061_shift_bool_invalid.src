@@ -1,0 +1,4 @@
+bool b;
+int x;
+b = true;
+x = b << 1;

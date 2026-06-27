@@ -1,0 +1,8 @@
+bool a;
+bool b;
+bool c;
+bool d;
+a = true;
+b = false;
+c = true;
+d = !a || b && c;
