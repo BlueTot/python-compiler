@@ -134,14 +134,22 @@ class SemanticChecker:
 
         # equals expression (any == any -> bool), level 6
         elif isinstance(expr, EqualsExpression):
-            _ = self.__check_expression(expr.expr1, scopes, initialised)
-            _ = self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if type(type1) != type(type2):
+                raise SemanticError("Operator '==' requires operands of the same type")
+
             return BoolType()
 
         # equals expression (any != any -> bool), level 6
         elif isinstance(expr, NotEqualsExpression):
-            _ = self.__check_expression(expr.expr1, scopes, initialised)
-            _ = self.__check_expression(expr.expr2, scopes, initialised)
+            type1 = self.__check_expression(expr.expr1, scopes, initialised)
+            type2 = self.__check_expression(expr.expr2, scopes, initialised)
+
+            if type(type1) != type(type2):
+                raise SemanticError("Operator '!=' requires operands of the same type")
+
             return BoolType()
 
         # greater than expression (int > int -> bool), level 7
@@ -325,7 +333,11 @@ class SemanticChecker:
         
         else: # declaration + initial assignment
             scopes[-1][declaration.var_name] = SymbolData(datatype = declaration.datatype, initialised=True)
-            self.__check_expression(declaration.value, scopes, initialised) # check initial expression
+
+            datatype = self.__check_expression(declaration.value, scopes, initialised) # check initial expression
+            if declaration.datatype != datatype: # check if expression's data type matches variable's declared data type
+                raise SemanticError(f"Cannot initialise variable '{declaration.var_name}' of type {declaration.datatype} with value of type {datatype}")
+
             initialised.add(declaration.var_name)
 
         return initialised
@@ -344,7 +356,7 @@ class SemanticChecker:
 
 
         datatype = self.__check_expression(statement.condition, scopes, initialised) # check condition is valid
-        if not isinstance(datatype, BoolType):
+        if not isinstance(datatype, BoolType): # check condition has type bool
             raise SemanticError("if condition must be bool")
 
         true_initialised = self.__check_block(statement.true_branch, scopes + [{}], initialised.copy()) # add new scope!!
@@ -367,7 +379,7 @@ class SemanticChecker:
         """
 
         datatype = self.__check_expression(loop.condition, scopes, initialised) # check the condition is valid
-        if not isinstance(datatype, BoolType):
+        if not isinstance(datatype, BoolType): # check condition has type bool
             raise SemanticError("while condition must be bool")
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check the loop body
@@ -385,7 +397,11 @@ class SemanticChecker:
         """
 
         self.__check_assignment(loop.initial, scopes, initialised) # check initial statement is valid
-        self.__check_expression(loop.condition, scopes, initialised) # check loop condition is valid
+
+        datatype = self.__check_expression(loop.condition, scopes, initialised) # check loop condition is valid
+        if not isinstance(datatype, BoolType): # check condition has type bool
+            raise SemanticError("for condition must be bool")
+
         self.__check_assignment(loop.increment, scopes, initialised) # check loop increment is valid
 
         self.__check_block(loop.loop_body, scopes + [{}], initialised.copy()) # check loop body is valid
